@@ -40,6 +40,26 @@ var parseForm = bodyParser.urlencoded({ extended: false })
 /**
  * Receives challenge response check (CRC)
  **/
+
+app.get('/webhook/Ayus', function(request, response) {
+
+  var crc_token = request.query.crc_token
+
+  if (crc_token) {
+    var hash = security.get_challenge_response(crc_token, auth.twitter_oauth.consumer_secret)
+
+    console.log(" CRC SUCCESS ");
+    response.status(200);
+    response.send({
+      response_token: 'sha256=' + hash
+    })
+  } else {
+     console.log(" CRC FAILED ! ");
+    response.status(400);
+    response.send('Error: crc_token missing from request.')
+  }
+})
+
 app.get('/webhook/twitter', function(request, response) {
 
   var crc_token = request.query.crc_token
